@@ -5,9 +5,7 @@ import time
 import json
 import html
 
-
-
-# login credentials
+# cim login credentials
 credentials = login_credentials()
 username = credentials[0]
 password = credentials[1]
@@ -39,8 +37,6 @@ async def cim_login(page):
     await page.click("#buttonSignOn")
 
 
-
-
 async def cim_support_ticket(page):
     print("going to support ticket page")
 
@@ -53,14 +49,9 @@ async def cim_support_ticket(page):
     await new_ticket.click()
     await asyncio.sleep(3)
 
-
-    # ### SELECT SUPPLIER TYPE ### #
-
-    # # get # options in drop-down
+    # select supplier type
     print("selecting supplier type")
     number_of_options = get_option_count('[{&quot;label&quot;:&quot;-&quot;,&quot;value&quot;:&quot;&quot;},{&quot;label&quot;:&quot;Core/Retail&quot;,&quot;value&quot;:&quot;core/retail_supplier&quot;},{&quot;label&quot;:&quot;HD Pro&quot;,&quot;value&quot;:&quot;hd_pro_supplier&quot;},{&quot;label&quot;:&quot;QuoteCenter&quot;,&quot;value&quot;:&quot;quote_center_supplier&quot;},{&quot;label&quot;:&quot;Canada&quot;,&quot;value&quot;:&quot;canada_supplier&quot;},{&quot;label&quot;:&quot;Store/Associate Use only (Suppliers should not select)&quot;,&quot;value&quot;:&quot;store/associate&quot;}]')
-
-    # send arrow down until the core/retail_supplier is selected
     supplier_type = await page.waitForSelector(
         '#new_request > div.form-field.string.required.request_custom_fields_360029395831 > a')
     await asyncio.sleep(1)
@@ -74,7 +65,6 @@ async def cim_support_ticket(page):
                                         await page.querySelector('#request_custom_fields_360029395831'))
         if new_value == "core/retail_supplier":
             break
-
     await asyncio.sleep(1)
 
     # Selecting the value "transportation_dms_carrier_support"
@@ -83,7 +73,6 @@ async def cim_support_ticket(page):
         const input = document.querySelector('input[name="request[custom_fields][360014494051]"]');
         input.value = 'transportation__dms_carrier_support';
     }''')
-
     await asyncio.sleep(1)
 
     # Selecting I am a
@@ -92,7 +81,6 @@ async def cim_support_ticket(page):
         const input = document.querySelector('input[name="request[custom_fields][360024820012]"]');
         input.value = 'carrier_dms_recipient';
     }''')
-
     await asyncio.sleep(1)
 
     # Selecting network
@@ -101,7 +89,6 @@ async def cim_support_ticket(page):
         const input = document.querySelector('input[name="request[custom_fields][360033229132]');
         input.value = 'dfs';
     }''')
-
     await asyncio.sleep(1)
 
     # Selecting category
@@ -110,7 +97,6 @@ async def cim_support_ticket(page):
             const input = document.querySelector('input[name="request[custom_fields][360024820492]');
             input.value = 'territory';
         }''')
-
     await asyncio.sleep(1)
 
     # Selecting division
@@ -119,7 +105,6 @@ async def cim_support_ticket(page):
             const input = document.querySelector('input[name="request[custom_fields][360025129731]');
             input.value = 'northern';
         }''')
-
     await asyncio.sleep(1)
 
     # selecting territory type
@@ -128,7 +113,6 @@ async def cim_support_ticket(page):
             const input = document.querySelector('input[name="request[custom_fields][360024821152]');
             input.value = '22';
         }''')
-
     await asyncio.sleep(1)
 
     # specific trucks
@@ -137,26 +121,21 @@ async def cim_support_ticket(page):
             const input = document.querySelector('input[name="request[custom_fields][1900000010427]');
             input.value = 'no_specific_trucks';
         }''')
-
     await asyncio.sleep(1)
 
     # add address
     print("adding address")
     await page.type('#request_custom_fields_360024821192', 'This is a test address.')
-
     await asyncio.sleep(1)
-
 
     # add emails
     print("adding emails")
     await page.type('#request_collaborators_', 'joe.simmons@estes-express.com')
-
     await asyncio.sleep(1)
 
     # add description
     print("adding description")
     await page.type('#request_description', 'This is a test description.')
-
     await asyncio.sleep(1)
 
     # add subject
@@ -164,6 +143,7 @@ async def cim_support_ticket(page):
     await page.type('#request_subject', 'This is a test subject.')
 
     time.sleep(999)
+
 
 async def main():
 
