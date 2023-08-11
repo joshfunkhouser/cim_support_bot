@@ -4,6 +4,14 @@ from config import login_credentials
 import time
 import json
 import html
+import os
+import pandas as pd
+
+# project location
+proj_dir = os.getcwd()
+
+# market matches
+market_match = [['Washington DC','washington_dc'],['Philadelphia', 'philadelphia']]
 
 # cim login credentials
 credentials = login_credentials()
@@ -166,6 +174,35 @@ async def main():
 
     # Close the browser
     await browser.close()
+
+
+# get input file
+input_dir = os.path.join(os.getcwd(), "input files")
+file_list = os.listdir(input_dir)
+excel_files = [file for file in file_list if file.endswith(".xlsx") or file.endswith(".xls")]
+required_columns = ["Market", "CSA", "WO", "Address", "Notes", "INI Ticket number"]
+# Read Excel files into Pandas DataFrames
+valid_dataframes = []
+for excel_file in excel_files:
+    file_path = os.path.join(input_dir, excel_file)
+    df = pd.read_excel(file_path, converters={'WO': str})
+    if all(col in df.columns for col in required_columns):
+        valid_dataframes.append(df)
+    else:
+        print(f"File '{excel_file}' does not have all required columns.")
+ticket_list = pd.concat(valid_dataframes, ignore_index=True)
+
+# clean up input file
+ticket_list['Market'] = ticket_list['Market'].str.replace('Market: ', '')
+ticket_list['Market'] = ticket_list['Market'].replace('unk', 'Washington DC')
+ticket_list['Address'].fillna('X', inplace=True)
+ticket_list['subject'] = '22 zone required ' + ticket_list['CSA']
+ticket_list['description'] = ticket_list['WO'] + ticket_list['Notes'].apply(lambda x: f" - {x}" if pd.notnull(x) and x != "" else "")
+
+# output file directory
+output_dir = os.path.join(os.getcwd(), "input files\\processed\\output.xlsx")
+ticket_list.to_excel(output_dir)
+quit()
 
 
 # run the asyncio event loop
